@@ -1,0 +1,26 @@
+{
+    "name": "codeia/bloom",
+    "description": "Another MVC framework",
+    "license": "MIT",
+    "authors": [{
+            "name": "Mon Zafra",
+            "role": "developer"
+    }],
+
+    "autoload": {
+        "psr-4": {
+            "codeia\\": "src"
+        },
+        "files": ["src/scratch.php"]
+    },
+
+    "require": {
+        "php": ">=5.5",
+        "container-interop/container-interop": "^1.1",
+        "guzzlehttp/psr7": "^1.3"
+    },
+
+    "require-dev": {
+        "phpunit/phpunit": "^5.4"
+    }
+}
