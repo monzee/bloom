@@ -32,6 +32,9 @@ interface View {
 
 interface Routable {
 
+    /** @return Request */
+    function traverse(Request $r);
+
     /** @return Uri */
-    function locate(Uri $u);
+    function locate(Uri $uri);
 }

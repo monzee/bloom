@@ -9,7 +9,7 @@
 
     "autoload": {
         "psr-4": {
-            "codeia\\": "src"
+            "Codeia\\": "src"
         },
         "files": ["src/scratch.php"]
     },
