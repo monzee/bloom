@@ -1,6 +1,6 @@
 <?php
 
-namespace Codeia\Typical;
+namespace Codeia\Di;
 
 use RuntimeException;
 use Interop\Container\Exception\ContainerException;

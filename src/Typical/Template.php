@@ -42,4 +42,7 @@ class Template implements Routable {
         return $uri->withPath($this->page == 'index' ? '/' : $this->page);
     }
 
+    function unit() {
+        return null;
+    }
 }

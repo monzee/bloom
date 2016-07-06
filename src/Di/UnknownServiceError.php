@@ -1,6 +1,6 @@
 <?php
 
-namespace Codeia\Typical;
+namespace Codeia\Di;
 
 use InvalidArgumentException;
 use Interop\Container\Exception\NotFoundException;

@@ -3,12 +3,18 @@
 namespace Codeia\Typical;
 
 use Codeia\Mvc;
+use Codeia\Di\ObjectGraphBuilder;
 use Interop\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Response;
+use FastRoute\RouteCollector;
+use FastRoute\RouteParser\Std;
+use FastRoute\DataGenerator\GroupCountBased as RegexStrategy;
+use FastRoute\Dispatcher\GroupCountBased as DispatchStrategy;
+use FastRoute\Dispatcher as RouteDispatcher;
 
 /*
  * This file is a part of the Bloom project.
@@ -20,61 +26,92 @@ use GuzzleHttp\Psr7\Response;
  *
  * @author Mon Zafra &lt;mz@codeia.ph&gt;
  */
-class CleanUrlApp extends Context implements ContainerInterface {
+class CleanUrlApp implements ContainerInterface {
 
     use CanGenerateUrls;
 
+    const DEFAULT_ROUTE = [
+        RoutableController::class, TemplateBasedView::class, null
+    ];
+
     private $services;
+    private $container;
 
     function __construct(array $services = []) {
-        parent::__construct();
         $this->services = $services;
+        $this->container = $this->newContext();
     }
 
-    function provide($id) {
-        switch ($id) {
-            case Mvc\EntryPoint::class:  // fallthrough
-            case Mvc\FrontController::class:
-                return $this->scoped('dispatcher');
-
-            case Mvc\Controller::class:
-                return new Router($this->get(Mvc\FrontController::class));
-
-            case Mvc\View::class:
-                return new Responder();
-
-            case Mvc\Routable::class:  // fallthrough
-            case Template::class:
-                return $this->scoped('template');
-
-            case RoutableController::class:
-                return new RoutableController($this->get(Mvc\Routable::class));
-
-            case TemplateBasedView::class:
-                return new TemplateBasedView($this->get(Template::class));
-
-            case RequestInterface::class:  // fallthrough
-            case ServerRequestInterface::class:
-                return ServerRequest::fromGlobals();
-
-            case ResponseInterface::class:
-                return new Response();
-
-            default:
-                throw new UnknownServiceError($id);
-        }
+    function get($id) {
+        return $this->container->get($id);
     }
 
     function has($id) {
-        return true;  // not really
+        return $this->container->has($id);
     }
 
-    protected function dispatcher() {
-        return new Dispatcher();
+    function newContext() {
+        return (new ObjectGraphBuilder($this))->withServices([
+            'request' => [ServerRequestInterface::class, RequestInterface::Class],
+            'response' => [ResponseInterface::class],
+            'controller' => [Mvc\Controller::class],
+            'view' => [Mvc\View::class],
+            'defaultController' => [RoutableController::class],
+            'defaultView' => [TemplateBasedView::class],
+        ])->withScoped([
+            'dispatcher' => [Mvc\EntryPoint::class, Mvc\FrontController::class],
+            'template' => [Mvc\Routable::class, Template::class],
+            'routeCollector' => [RouteCollector::class],
+            'routeDispatcher' => [RouteDispatcher::class],
+            'routesBuilder' => [RouteListBuilder::class],
+        ])->build();
     }
 
-    protected function template() {
+    function dispatcher() {
+        return new MetaDispatcher();
+    }
+
+    function template() {
         return new Template();
     }
 
+    function controller(ContainerInterface $c) {
+        return new Router(
+            $c->get(Mvc\FrontController::class),
+            $c->get(RouteDispatcher::class)
+        );
+    }
+
+    function view() {
+        return new Responder();
+    }
+
+    function defaultController(ContainerInterface $c) {
+        return new RoutableController($c->get(Mvc\Routable::class));
+    }
+
+    function defaultView(ContainerInterface $c) {
+        return new TemplateBasedView($c->get(Template::class));
+    }
+
+    function request() {
+        return ServerRequest::fromGlobals();
+    }
+
+    function response() {
+        return new Response();
+    }
+
+    function routeCollector() {
+        return new RouteCollector(new Std(), new RegexStrategy());
+    }
+
+    function routeDispatcher(ContainerInterface $c) {
+        $routeData = $c->get(RouteCollector::class)->getData();
+        return new DispatchStrategy($routeData);
+    }
+
+    function routesBuilder(ContainerInterface $c) {
+        return Router::on($c->get(RouteCollector::class));
+    }
 }

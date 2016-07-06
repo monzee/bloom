@@ -8,11 +8,11 @@ namespace Codeia\Mvc;
  */
 
 /**
- * Description of FrontController
+ * The FrontController is actually a Model in the root MVC. Don't be confused.
  *
  * @author Mon Zafra &lt;mz@codeia.ph&gt;
  */
 interface FrontController extends EntryPoint {
 
-    function setRoute($controllerClass, $viewClass);
+    function setRoute($controllerClass, $viewClass, $contextClass = null);
 }

@@ -2,6 +2,7 @@
 
 namespace Codeia\Mvc;
 
+use Interop\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
 
@@ -23,4 +24,6 @@ interface Routable {
     /** @return UriInterface */
     function locate(UriInterface $uri);
 
+    /** @return ContainerInterface|null */
+    function unit();
 }

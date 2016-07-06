@@ -4,6 +4,7 @@ namespace demo;
 
 use Codeia\Bloom;
 use Codeia\Typical\CleanUrlApp;
+use Codeia\Typical\RouteListBuilder;
 use Codeia\Typical\Template;
 
 /*
@@ -15,10 +16,15 @@ $assetExtensions = ['css', 'js', 'png', 'jpe?g', 'svg', 'txt', 'md'];
 $exts = implode('|', $assetExtensions);
 if (preg_match('/\.(?:' . $exts . ')(?:\?.*)?$/', $_SERVER['REQUEST_URI'])) {
     return false;
-} else {
-    chdir(__DIR__);
-    require_once '../vendor/autoload.php';
-    $app = new CleanUrlApp();
-    $app->get(Template::class)->bind('url', $app->urlTo(new Template('foo')));
-    Bloom::run($app);
 }
+
+chdir(__DIR__);
+require_once '../vendor/autoload.php';
+
+$app = new CleanUrlApp();
+$app->get(Template::class)->bind('url', $app->urlTo(new Template('foo')));
+
+Bloom::run($app, function (RouteListBuilder $on) {
+    $on->get('/', CleanUrlApp::DEFAULT_ROUTE);
+    $on->get('/foo', CleanUrlApp::DEFAULT_ROUTE);
+});
