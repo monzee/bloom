@@ -5,7 +5,7 @@ namespace Codeia\Typical;
 use Codeia\Mvc\Controller;
 use Codeia\Mvc\FrontController;
 use Interop\Container\ContainerInterface;
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /*
@@ -29,7 +29,7 @@ class Dispatcher implements FrontController {
     }
 
     function main(ContainerInterface $c) {
-        $request = $c->get(RequestInterface::class);
+        $request = $c->get(ServerRequestInterface::class);
         $request = $c->get(Controller::class)->dispatch($request) ?: $request;
         if (null !== $this->controller) {
             $c->get($this->controller)->dispatch($request);

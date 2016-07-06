@@ -4,7 +4,7 @@ namespace Codeia\Typical;
 
 use Codeia\Mvc\Controller;
 use Codeia\Mvc\FrontController;
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /*
  * This file is a part of the Bloom project.
@@ -24,10 +24,11 @@ class Router implements Controller {
         $this->dispatcher = $m;
     }
 
-    function dispatch(RequestInterface $r) {
+    function dispatch(ServerRequestInterface $r) {
         $this->dispatcher->setRoute(
             RoutableController::class,
-            TemplateBasedView::class);
+            TemplateBasedView::class
+        );
     }
 
 }

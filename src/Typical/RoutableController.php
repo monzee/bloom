@@ -4,7 +4,7 @@ namespace Codeia\Typical;
 
 use Codeia\Mvc\Controller;
 use Codeia\Mvc\Routable;
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /*
  * This file is a part of the Bloom project.
@@ -24,7 +24,7 @@ class RoutableController implements Controller {
         $this->model = $model;
     }
 
-    function dispatch(RequestInterface $r) {
+    function dispatch(ServerRequestInterface $r) {
         return $this->model->traverse($r);
     }
 

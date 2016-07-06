@@ -309,4 +309,156 @@ class TemplateScope {
     }
 }
 
-Bloom::run(new Context());
+class GraphBuilder {
+    private $services = [];
+    private $scoped = [];
+    private $module;
+
+    function __construct($p) {
+        $this->module = $p;
+    }
+
+    function bind($method, $types, $scoped = false) {
+        $which = $scoped ? 'scoped' : 'services';
+        if (is_int($method)) {
+            if (is_array($types)) {
+                foreach ($types as $k => $v) {
+                    $this->bind($k, $v, $scoped);
+                }
+                return $this;
+            }
+            $method = $types;
+        }
+        if (!is_array($types)) {
+            $types = [$types];
+        }
+        foreach ($types as $type) {
+            $this->{$which}[$type] = $method;
+        }
+        return $this;
+    }
+
+    function withServices(array $services) {
+        foreach ($services as $method => $type) {
+            $this->bind($method, $type, false);
+        }
+        return $this;
+    }
+
+    function withScoped(array $services) {
+        foreach ($services as $method => $type) {
+            $this->bind($method, $type, true);
+        }
+        return $this;
+    }
+
+    function build(ContainerInterface $parent = null) {
+        $c = new Component($this->module, $this->services, $this->scoped);
+        return new ObjectGraph($c, $parent);
+    }
+}
+
+
+class Component {
+    private $services = [];
+    private $scopedServices = [];
+    private $scope = [];
+    private $make;
+
+    function __construct($module, array $services, array $scoped) {
+        $this->make = $module;
+        $this->services = $services;
+        $this->scopedServices = $scoped;
+    }
+
+    function make($type, ContainerInterface $context) {
+        if (array_key_exists($type, $this->services)) {
+            $method = $this->services[$type];
+            return $this->make->$method($context);
+        } else if (array_key_exists($type, $this->scopedServices)) {
+            $method = $this->scopedServices[$type];
+            if (!array_key_exists($method, $this->scope)) {
+                $this->scope[$method] = $this->make->$method($context);
+            }
+            return $this->scope[$method];
+        }
+        // throw
+    }
+
+    function provides($key) {
+        return array_key_exists($key, $this->services)
+            || array_key_exists($key, $this->scopedServices);
+    }
+}
+
+class ObjectGraph implements ContainerInterface {
+    private $component;
+    private $superScope;
+
+    function __construct(Component $c, ContainerInterface $parent = null) {
+        $this->component = $c;
+        $this->superScope = $parent;
+    }
+
+    function get($id) {
+        if ($this->component->provides($id)) {
+            return $this->component->make($id, $this);
+        } else if ($this->superScope !== null) {
+            return $this->superScope->get($id);
+        }
+        // throw
+        error_log("unknown {$id}");
+    }
+
+    function has($id) {
+        return $this->component->provides($id);
+    }
+}
+
+class App {
+    function request() {
+        return ServerRequest::fromGlobals();
+    }
+
+    function response() {
+        return new Response();
+    }
+
+    function frontController() {
+        return new Dispatcher();
+    }
+
+    function controller($c) {
+        return new Router($c->get(FrontController::class));
+    }
+
+    function view() {
+        return new Responder();
+    }
+
+    function simplePage($c) {
+        return new PathToPhtml($c->get(Phtml::class));
+    }
+
+    function pageRenderer($c) {
+        return new RenderPage($c->get(Phtml::class));
+    }
+
+    function phtml() {
+        return new Phtml();
+    }
+}
+
+$g = (new GraphBuilder(new App))->withServices([
+    'request' => [RequestInterface::class],
+    'response' => [ResponseInterface::class],
+    'controller' => [Controller::class],
+    'view' => [View::class],
+    'simplePage' => [PathToPhtml::class],
+    'pageRenderer' => [RenderPage::class],
+])->withScoped([
+    'frontController' => [Dispatcher::class, FrontController::class],
+    'phtml' => [Phtml::class],
+])->build();
+
+Bloom::run($g);

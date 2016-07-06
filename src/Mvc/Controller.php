@@ -2,7 +2,7 @@
 
 namespace Codeia\Mvc;
 
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /*
  * This file is a part of the Bloom project.
@@ -16,6 +16,6 @@ use Psr\Http\Message\RequestInterface;
  */
 interface Controller {
 
-    /** @return RequestInterface|null */
-    function dispatch(RequestInterface $r);
+    /** @return ServerRequestInterface|null */
+    function dispatch(ServerRequestInterface $r);
 }
