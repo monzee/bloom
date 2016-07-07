@@ -4,12 +4,19 @@
     "license": "MIT",
     "authors": [{
             "name": "Mon Zafra",
+            "email": "mz@codeia.ph",
             "role": "developer"
     }],
 
     "autoload": {
         "psr-4": {
             "Codeia\\": "src"
+        }
+    },
+
+    "autoload-dev": {
+        "psr-4": {
+            "demo\\": "demo"
         },
         "files": ["src/scratch.php"]
     },

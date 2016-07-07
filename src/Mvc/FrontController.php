@@ -14,5 +14,19 @@ namespace Codeia\Mvc;
  */
 interface FrontController extends EntryPoint {
 
+    /**
+     * C, V, Cont => Class C, Class V, Class Cont -> ()
+     * where C :> Controller, V :> View, Cont :> ContainerInterface
+     *
+     * The arguments must be service names (usually just class names) as
+     * strings, not instances. They should be resolvable by a
+     * ContainerInterface. The $contextClass must be resolvable by the root
+     * container. The other two should be resolvable by either the root or an
+     * instance of $contextClass.
+     *
+     * @param string $controllerClass Class should extend Mvc\Controller
+     * @param string $viewClass       Class should extend Mvc\View
+     * @param string $contextClass    Class should extend ContainerInterface
+     */
     function setRoute($controllerClass, $viewClass, $contextClass = null);
 }

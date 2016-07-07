@@ -26,14 +26,6 @@ class TemplateBasedView implements View {
         $this->model = $m;
     }
 
-    function pushPath($path) {
-        $this->_templatePaths[] = $path;
-    }
-
-    function unshiftPath($path) {
-        array_unshift($this->_templatePaths, $path);
-    }
-
     function fold(ResponseInterface $r) {
         $r = $r->withStatus(200)->withHeader('content-type', 'text/html');
         $phtml = $this->model->page . '.phtml';

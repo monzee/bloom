@@ -1,0 +1,12 @@
+<!doctype html>
+<html>
+<head>
+  <title>Hello BLOOM</title>
+</head>
+<body>
+  <h1>Hello <?= $name ?: 'World' ?>!</h1>
+  <a href="<?= $this->urlTo($somebody) ?>">
+    greet <?= isset($name) ? 'someone else' : 'somebody' ?>.
+  </a>
+</body>
+</html>

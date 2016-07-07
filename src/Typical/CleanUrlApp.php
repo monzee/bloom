@@ -3,6 +3,7 @@
 namespace Codeia\Typical;
 
 use Codeia\Mvc;
+use Codeia\Di\AutoResolve;
 use Codeia\Di\ObjectGraphBuilder;
 use Interop\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
@@ -28,18 +29,18 @@ use FastRoute\Dispatcher as RouteDispatcher;
  */
 class CleanUrlApp implements ContainerInterface {
 
-    use CanGenerateUrls;
+    const DEFAULT_ROUTE = [RoutableController::class, TemplateBasedView::class];
 
-    const DEFAULT_ROUTE = [
-        RoutableController::class, TemplateBasedView::class, null
-    ];
+    protected $container;
 
-    private $services;
-    private $container;
-
-    function __construct(array $services = []) {
-        $this->services = $services;
+    function __construct() {
         $this->container = $this->newContext();
+    }
+
+    static function autoResolve() {
+        $app = new static();
+        $app->container = new AutoResolve($app->container);
+        return $app;
     }
 
     function get($id) {
@@ -54,10 +55,10 @@ class CleanUrlApp implements ContainerInterface {
         return (new ObjectGraphBuilder($this))->withServices([
             'request' => [ServerRequestInterface::class, RequestInterface::Class],
             'response' => [ResponseInterface::class],
-            'controller' => [Mvc\Controller::class],
-            'view' => [Mvc\View::class],
-            'defaultController' => [RoutableController::class],
-            'defaultView' => [TemplateBasedView::class],
+            'metaController' => [Mvc\Controller::class],
+            'metaView' => [Mvc\View::class],
+            'controller' => [RoutableController::class],
+            'view' => [TemplateBasedView::class],
         ])->withScoped([
             'dispatcher' => [Mvc\EntryPoint::class, Mvc\FrontController::class],
             'template' => [Mvc\Routable::class, Template::class],
@@ -68,29 +69,29 @@ class CleanUrlApp implements ContainerInterface {
     }
 
     function dispatcher() {
-        return new MetaDispatcher();
+        return new Application();
     }
 
     function template() {
         return new Template();
     }
 
-    function controller(ContainerInterface $c) {
+    function metaController(ContainerInterface $c) {
         return new Router(
             $c->get(Mvc\FrontController::class),
             $c->get(RouteDispatcher::class)
         );
     }
 
-    function view() {
+    function metaView() {
         return new Responder();
     }
 
-    function defaultController(ContainerInterface $c) {
+    function controller(ContainerInterface $c) {
         return new RoutableController($c->get(Mvc\Routable::class));
     }
 
-    function defaultView(ContainerInterface $c) {
+    function view(ContainerInterface $c) {
         return new TemplateBasedView($c->get(Template::class));
     }
 
@@ -112,6 +113,6 @@ class CleanUrlApp implements ContainerInterface {
     }
 
     function routesBuilder(ContainerInterface $c) {
-        return Router::on($c->get(RouteCollector::class));
+        return new RouteListBuilder($c->get(RouteCollector::class));
     }
 }

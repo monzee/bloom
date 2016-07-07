@@ -1,7 +1,14 @@
 <!doctype html>
 <html>
+  <head>
+    <title>in Bloom</title>
+  </head>
   <body>
-    <h1>hello.</h1>
-    <a href="<?= $url ?>">go somewhere</a>.
+    <h1>hey. you are blooming today.</h1>
+    <p><a href="<?= $hello ?>">how are you</a>?</p>
+    <p><a href="<?= $fizz ?>">let's play</a>!</p>
+    <p><a href="<?= $foo ?>">go to a static page</a>.</p>
+    <p>local variables in templates are auto escaped. observe:</p>
+    <pre><?= $xss ?></pre>
   </body>
 </html>

@@ -14,11 +14,11 @@ use Psr\Http\Message\ResponseInterface;
  */
 
 /**
- * Description of Dispatcher
+ * Default HTTP application.
  *
  * @author Mon Zafra &lt;mz@codeia.ph&gt;
  */
-class MetaDispatcher implements FrontController {
+class Application implements FrontController {
 
     private $controller;
     private $view;

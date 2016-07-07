@@ -1,4 +1,5 @@
 <?php
+/** @deprecated please ignore, this is the api prototype */
 
 namespace scratch;
 

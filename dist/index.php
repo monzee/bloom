@@ -2,10 +2,10 @@
 
 namespace demo;
 
+use demo\fizzbuzz as fb;
 use Codeia\Bloom;
 use Codeia\Typical\CleanUrlApp;
 use Codeia\Typical\RouteListBuilder;
-use Codeia\Typical\Template;
 
 /*
  * This file is a part of the Bloom project.
@@ -21,10 +21,10 @@ if (preg_match('/\.(?:' . $exts . ')(?:\?.*)?$/', $_SERVER['REQUEST_URI'])) {
 chdir(__DIR__);
 require_once '../vendor/autoload.php';
 
-$app = new CleanUrlApp();
-$app->get(Template::class)->bind('url', $app->urlTo(new Template('foo')));
-
-Bloom::run($app, function (RouteListBuilder $on) {
-    $on->get('/', CleanUrlApp::DEFAULT_ROUTE);
+Bloom::run(CleanUrlApp::autoResolve(), function (RouteListBuilder $on) {
+    $on->get('/', Root::class);
     $on->get('/foo', CleanUrlApp::DEFAULT_ROUTE);
+    $on->get('/hello[/{name}]', [Hello::class, HelloView::class]);
+    $on->get('/fizzbuzz[/{prev:\d+}]',
+        [fb\FizzBuzzController::class, fb\FizzBuzzView::class]);
 });

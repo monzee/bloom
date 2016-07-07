@@ -2,7 +2,7 @@
 
 namespace Codeia\Mvc;
 
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\UriInterface;
 
 /*
  * This file is a part of the Bloom project.
@@ -10,12 +10,12 @@ use Psr\Http\Message\RequestInterface;
  */
 
 /**
- * Description of Routable
+ * Description of Locatable
  *
  * @author Mon Zafra &lt;mz@codeia.ph&gt;
  */
-interface Routable extends Locatable {
+interface Locatable {
 
-    /** @return RequestInterface */
-    function traverse(RequestInterface $r);
+    /** @return UriInterface */
+    function locate(UriInterface $uri);
 }

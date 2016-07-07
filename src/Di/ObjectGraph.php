@@ -39,7 +39,7 @@ class ObjectGraph implements ContainerInterface {
 
     private function ensureNoCycles($name) {
         if (in_array($name, $this->resolving)) {
-            throw new CyclicDependencyError($name, $this->resolving);
+            throw new CyclicDependencyError($this->resolving);
         }
         $this->resolving[] = $name;
     }

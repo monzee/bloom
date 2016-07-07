@@ -4,8 +4,8 @@ namespace Codeia\Typical;
 
 use Codeia\Mvc\Controller;
 use Codeia\Mvc\FrontController;
+use Codeia\Typical\TemplateBasedView;
 use Psr\Http\Message\ServerRequestInterface;
-use FastRoute\RouteCollector;
 use FastRoute\Dispatcher as RouteDispatcher;
 
 /*
@@ -20,6 +20,8 @@ use FastRoute\Dispatcher as RouteDispatcher;
  */
 class Router implements Controller {
 
+    const DEFAULT_VIEW = TemplateBasedView::class;
+
     private $front;
     private $dispatcher;
 
@@ -33,29 +35,32 @@ class Router implements Controller {
         $result = $this->dispatcher->dispatch($r->getMethod(), $uri->getPath());
         switch (count($result)) {
             case 1:  // not found
+                // TODO
                 break;
             case 2:  // matched path but not the method
+                list(, $allowedMethods) = $result;
+                // TODO
                 break;
 
-            case 3:
-                list(, $handler, $attrs) = $result;
+            default:
+                list(, $message, $attrs) = $result;
                 foreach ($attrs as $k => $v) {
                     $r = $r->withAttribute($k, $v);
                 }
-                if (is_callable($handler)) {
-                    return $handler($this->front) ?: $r;
+                if (is_callable($message)) {
+                    return $message($this->front) ?: $r;
                 }
-                list($c, $v, $context) = $handler;
-                $this->front->setRoute($c, $v, $context);
-                return $r;
-
-            default:
+                if (is_array($message)) {
+                    call_user_func_array([$this->front, 'setRoute'], $message);
+                    return $r;
+                }
+                if (is_string($message)) {
+                    $this->front->setRoute($message, self::DEFAULT_VIEW);
+                    return $r;
+                }
+                // what do?
                 break;
         }
-    }
-
-    static function on(RouteCollector $rc) {
-        return new RouteListBuilder($rc);
     }
 
 }

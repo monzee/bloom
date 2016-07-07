@@ -1,4 +1,5 @@
 <?php
+/** @deprecated please ignore this */
 
 namespace scratch;
 

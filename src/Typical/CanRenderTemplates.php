@@ -18,6 +18,14 @@ trait CanRenderTemplates {
 
     private $_templatePaths = ['.'];
 
+    function pushPath($path) {
+        $this->_templatePaths[] = $path;
+    }
+
+    function unshiftPath($path) {
+        array_unshift($this->_templatePaths, $path);
+    }
+
     function render($file, array $vars = []) {
         $path = $this->pathTo($file);
         if ($path !== null) {

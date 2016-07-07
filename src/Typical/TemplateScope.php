@@ -32,7 +32,7 @@ class TemplateScope {
 
     function __get($name) {
         if (array_key_exists($name, $this->raw)) {
-            return $this->raw;
+            return $this->raw[$name];
         }
         return null;
     }

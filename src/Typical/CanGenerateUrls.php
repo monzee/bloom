@@ -2,7 +2,7 @@
 
 namespace Codeia\Typical;
 
-use Codeia\Mvc\Routable;
+use Codeia\Mvc\Locatable;
 use Psr\Http\Message\UriInterface;
 use GuzzleHttp\Psr7\Uri;
 
@@ -19,11 +19,11 @@ use GuzzleHttp\Psr7\Uri;
 trait CanGenerateUrls {
 
     /**
-     * @param Routable $resource
+     * @param Locatable $resource
      * @param UriInterface $base
      * @return UriInterface
      */
-    function urlTo(Routable $resource, UriInterface $base = null) {
+    function urlTo(Locatable $resource, UriInterface $base = null) {
         return $resource->locate($base ?: new Uri('/'));
     }
 

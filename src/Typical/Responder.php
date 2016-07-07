@@ -12,7 +12,7 @@ use Psr\Http\Message\ResponseInterface;
  */
 
 /**
- * Description of Responder
+ * Default ResponseInterface emitter
  *
  * @author Mon Zafra &lt;mz@codeia.ph&gt;
  */
@@ -22,7 +22,6 @@ class Responder implements View {
         $version = 'BLOOM/' . Bloom::VERSION;
         $response = $r->withAddedHeader('X-Powered-By', $version);
         $this->emit($response);
-        return $response;
     }
 
     private function emit(ResponseInterface $response) {
