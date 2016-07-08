@@ -17,9 +17,15 @@ use FastRoute\RouteCollector;
 class RouteListBuilder {
 
     private $routes;
+    private $prefix = '';
 
     function __construct(RouteCollector $rc) {
         $this->routes = $rc;
+    }
+
+    function stem($prefix) {
+        $this->prefix = rtrim($prefix, '/');
+        return $this;
     }
 
     function get($path, $handler) {
@@ -39,6 +45,9 @@ class RouteListBuilder {
     }
 
     private function add($methods, $path, $handler) {
+        if (!empty($this->prefix)) {
+            $path = "{basePath:{$this->prefix}}/" . ltrim($path, '/');
+        }
         $this->routes->addRoute($methods, $path, $handler);
         return $this;
     }

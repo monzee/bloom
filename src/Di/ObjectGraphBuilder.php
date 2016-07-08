@@ -14,6 +14,8 @@ namespace Codeia\Di;
  */
 class ObjectGraphBuilder {
 
+    const SCOPED = true;
+
     private $services = [];
     private $scoped = [];
     private $module;

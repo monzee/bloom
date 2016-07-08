@@ -6,6 +6,7 @@ use Codeia\Mvc\EntryPoint;
 use Codeia\Mvc\View;
 use Codeia\Typical\RouteListBuilder;
 use Interop\Container\ContainerInterface as Container;
+use Psr\Http\Message\RequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 
 /*
@@ -46,6 +47,14 @@ class Bloom {
         $front = $context->get(EntryPoint::class);
         $appResult = $front->main($context) ?: $context->get(Response::class);
         return $context->get(View::class)->fold($appResult);
+    }
+
+    /** @return Response|null */
+    static function test(Container $context, $controllerClass, $viewClass) {
+        $request = $context->get(Request::class);
+        $controller = $context->get($controllerClass);
+        $view = $context->get($viewClass);
+        return $view->fold($controller->dispatch($request));
     }
 
 }

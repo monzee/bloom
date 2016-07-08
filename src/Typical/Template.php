@@ -39,7 +39,14 @@ class Template implements Routable {
     }
 
     function locate(UriInterface $uri) {
-        return $uri->withPath($this->page == 'index' ? '/' : $this->page);
+        $path = $this->page == 'index' ? '/' : $this->page;
+        $base = $uri->getPath();
+        if (!empty($base)) {
+            $path = rtrim($base, '/') . '/' . ltrim($path, '/');
+        }
+        return $uri->withPath($path);
+
+
     }
 
 }

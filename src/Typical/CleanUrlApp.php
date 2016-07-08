@@ -52,7 +52,7 @@ class CleanUrlApp implements ContainerInterface {
     }
 
     function newContext() {
-        return (new ObjectGraphBuilder($this))->withServices([
+        $builder = (new ObjectGraphBuilder($this))->withServices([
             'request' => [ServerRequestInterface::class, RequestInterface::Class],
             'response' => [ResponseInterface::class],
             'metaController' => [Mvc\Controller::class],
@@ -65,7 +65,12 @@ class CleanUrlApp implements ContainerInterface {
             'routeCollector' => [RouteCollector::class],
             'routeDispatcher' => [RouteDispatcher::class],
             'routesBuilder' => [RouteListBuilder::class],
-        ])->build();
+        ]);
+        $this->willBuild($builder);
+        return $builder->build();
+    }
+
+    function willBuild(ObjectGraphBuilder $builder) {
     }
 
     function dispatcher() {
