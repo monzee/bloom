@@ -19,6 +19,7 @@ class TemplateBasedView implements View {
 
     use CanGenerateUrls;
     use CanRenderTemplates;
+    use CanDoTerribleThings;
 
     private $model;
 

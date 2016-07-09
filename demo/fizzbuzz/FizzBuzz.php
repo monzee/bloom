@@ -25,12 +25,12 @@ class FizzBuzz implements Locatable {
     }
 
     /** @param int $n */
-    function from($n) {
+    function at($n) {
         $this->n = $n;
     }
 
     /** @return string */
-    function text() {
+    function say() {
         $current = $this->n;
         list($fizz, $n) = $current % 3 == 0 ? ['Fizz', ''] : ['', $current];
         list($buzz, $n) = $current % 5 == 0 ? ['Buzz', ''] : ['', $n];

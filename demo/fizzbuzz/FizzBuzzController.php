@@ -24,7 +24,7 @@ class FizzBuzzController implements Controller {
     }
 
     function dispatch(Request $r) {
-        $this->fizzbuzz->from((int) $r->getAttribute('prev', 1));
+        $this->fizzbuzz->at((int) $r->getAttribute('prev', 1));
     }
 
 }

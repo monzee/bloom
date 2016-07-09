@@ -74,17 +74,11 @@ class AutoResolve implements ContainerInterface {
     }
 
     private function maybeResolvable($service) {
-        if (array_key_exists($service, $this->resolvable)) {
-            return true;
+        if (!array_key_exists($service, $this->resolvable)) {
+            $this->resolvable[$service] = class_exists($service) &&
+                ((new \ReflectionClass($service))->isInstantiable());
         }
-        if (!class_exists($service)) {
-            return false;
-        }
-        if ((new \ReflectionClass($service))->isInstantiable()) {
-            $this->resolvable[$service] = true;
-            return true;
-        }
-        return false;
+        return $this->resolvable[$service];
     }
 
     private function ensureNoCycles($name) {

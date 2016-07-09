@@ -36,7 +36,8 @@ class ObjectGraphBuilder {
             $method = $types;
         }
         if (!is_array($types)) {
-            $types = [$types];
+            $this->{$which}[$types] = $method;
+            return $this;
         }
         foreach ($types as $type) {
             $this->{$which}[$type] = $method;

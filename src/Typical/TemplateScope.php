@@ -47,11 +47,11 @@ class TemplateScope {
         include $__FILE;
     }
 
-    private function e($str) {
+    function e($str) {
         if (method_exists($this->delegate, 'escape')) {
             return $this->delegate->escape($str);
         }
-        return htmlentities($str, ENT_COMPAT | ENT_HTML5, 'UTF-8');
+        return htmlentities($str, ENT_COMPAT, 'UTF-8');
     }
 
 }

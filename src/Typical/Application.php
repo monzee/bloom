@@ -2,10 +2,13 @@
 
 namespace Codeia\Typical;
 
+use Codeia\Di\ContainerGraph;
+use Codeia\Di\MutableSandwich;
 use Codeia\Mvc\Controller;
 use Codeia\Mvc\FrontController;
 use Interop\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /*
@@ -36,12 +39,17 @@ class Application implements FrontController {
         if ($this->context !== null) {
             $c = new ContainerGraph($c, $c->get($this->context));
         }
+        $c = new MutableSandwich($c);
         if (null !== $this->controller) {
-            $c->get($this->controller)->dispatch($request);
+            $finalRequest = $c->get($this->controller)->dispatch($request);
+            if ($finalRequest !== null && $finalRequest !== $request) {
+                $c->unshift(ServerRequestInterface::class, $finalRequest);
+                $c->push(RequestInterface::class, $finalRequest);  // you sure?
+            }
         }
         $response = $c->get(ResponseInterface::class);
         if (null !== $this->view) {
-            $response = $c->get($this->view)->fold($response) ?: $response;
+            return $c->get($this->view)->fold($response);
         }
         return $response;
     }

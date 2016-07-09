@@ -31,7 +31,7 @@ class FizzBuzzView implements View {
         $this->pushPath(__DIR__);
         $body->write($this->render('fizzbuzz.phtml', [
             'next' => $this->fizzbuzz->next(),
-            'text' => $this->fizzbuzz->text(),
+            'text' => $this->fizzbuzz->say(),
         ]));
     }
 

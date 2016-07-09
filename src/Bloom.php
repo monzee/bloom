@@ -35,8 +35,8 @@ class Bloom {
      *                           {@see EntryPoint}, {@see View},
      *                           {@see ResponseInterface} and optionally
      *                           {@see RouteListBuilder}.
-     * @param callable $routing  Function of type RouteListBuilder -> (). The
-     *                           context should be able to provide a
+     * @param callable $routing  Function of type RouteListBuilder -> (). Will
+     *                           be ignored if the context does not provide a
      *                           {@see RouteListBuilder}.
      * @return Response|null
      */
@@ -49,12 +49,27 @@ class Bloom {
         return $context->get(View::class)->fold($appResult);
     }
 
-    /** @return Response|null */
+    /**
+     * Runs an MVC unit.
+     *
+     * The premise here is that the controller and view have a common dependency
+     * (maybe multiple) that is mutated first by the controller and then used by
+     * the view to generate a response. The common dependencies are application
+     * models. They are not domain models, although they are free to have (and
+     * probably do have) domain model dependencies.
+     *
+     * @param Container $context      This container should be able to provide
+     *                                every thing needed transitively by the
+     *                                controller and view.
+     * @param string $controllerClass
+     * @param string $viewClass
+     * @return Response|null
+     */
     static function test(Container $context, $controllerClass, $viewClass) {
-        $request = $context->get(Request::class);
         $controller = $context->get($controllerClass);
         $view = $context->get($viewClass);
-        return $view->fold($controller->dispatch($request));
+        $controller->dispatch($context->get(Request::class));
+        return $view->fold($context->get(Response::class));
     }
 
 }
