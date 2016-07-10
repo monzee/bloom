@@ -33,6 +33,10 @@ class VarAnnotations {
     public $afterDqString;
     /** {asdf} @var Codeia\Test\Emiya */
     public $afterBlock;
+    /** {{level 2 {level 3 {{level 5 } level 4 }}} level 1} @var Codeia\Test\Emiya */
+    public $afterNestedBlocks;
+    /** {{{}} @var Codeia\Test\Emiya */
+    public $afterImproperlyClosedBlocks;
 
     /** @var l!ul\4head */
     private $followedByAnInvalidFQCN;

@@ -27,9 +27,14 @@ class Sempai {
     const NO = false;
 
     private $source;
+    private $showNotices = true;
 
     function __construct(ContainerInterface $source) {
         $this->source = $source;
+    }
+
+    function shutup() {
+        $this->showNotices = false;
     }
 
     /**
@@ -51,7 +56,7 @@ class Sempai {
             if ($type === null) {
                 continue;
             }
-            if (!$this->source->has($type)) {
+            if (!$this->source->has($type) && $this->showNotices) {
                 $name = $obj->getName() . '::$' . $p->getName();
                 trigger_error(
                     "sempai noticed {$name} but can't resolve `{$type}`.",

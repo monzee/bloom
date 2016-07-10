@@ -57,9 +57,9 @@ class CleanUrlApp implements ContainerInterface {
             'response' => [ResponseInterface::class],
             'metaController' => [Mvc\Controller::class],
             'metaView' => [Mvc\View::class],
+        ])->withScoped([
             'controller' => [RoutableController::class],
             'view' => [TemplateBasedView::class],
-        ])->withScoped([
             'dispatcher' => [Mvc\EntryPoint::class, Mvc\FrontController::class],
             'template' => [Mvc\Routable::class, Template::class],
             'routeCollector' => [RouteCollector::class],

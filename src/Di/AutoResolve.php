@@ -33,6 +33,8 @@ class AutoResolve implements ContainerInterface {
                 $this->scope[$id] = $this->resolve($id);
             }
             return $this->scope[$id];
+        } else if ($id === ContainerInterface::class) {
+            return $this;
         }
         throw new CannotAutoResolveError($id);
     }

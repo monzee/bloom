@@ -91,6 +91,8 @@ class SempaiTest extends TestCase {
         $this->assertNotNull($o->afterSqString);
         $this->assertNotNull($o->afterDqString);
         $this->assertNotNull($o->afterBlock);
+        $this->assertNotNull($o->afterNestedBlocks);
+        $this->assertNull($o->afterImproperlyClosedBlocks);
     }
 
     /** @expectedException PHPUnit_Framework_Error_Notice */

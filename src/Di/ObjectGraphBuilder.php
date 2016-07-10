@@ -25,7 +25,9 @@ class ObjectGraphBuilder {
     }
 
     function bind($method, $types, $scoped = false) {
-        $which = $scoped ? 'scoped' : 'services';
+        list($which, $other) = $scoped ?
+            ['scoped', 'services'] :
+            ['services', 'scoped'];
         if (is_int($method)) {
             if (is_array($types)) {
                 foreach ($types as $k => $v) {
@@ -37,24 +39,26 @@ class ObjectGraphBuilder {
         }
         if (!is_array($types)) {
             $this->{$which}[$types] = $method;
+            unset($this->{$other}[$types]);
             return $this;
         }
         foreach ($types as $type) {
             $this->{$which}[$type] = $method;
+            unset($this->{$other}[$type]);
         }
         return $this;
     }
 
     function withServices(array $services) {
         foreach ($services as $method => $type) {
-            $this->bind($method, $type, false);
+            $this->bind($method, $type);
         }
         return $this;
     }
 
     function withScoped(array $services) {
         foreach ($services as $method => $type) {
-            $this->bind($method, $type, true);
+            $this->bind($method, $type, self::SCOPED);
         }
         return $this;
     }
