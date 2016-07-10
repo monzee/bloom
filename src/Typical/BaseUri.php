@@ -17,6 +17,7 @@ use Psr\Http\Message\UriInterface;
  */
 class BaseUri {
 
+    const BASE_PATH = 'basePath';
     const SCHEME = 1;
     const USER_INFO = 2;
     const HOST = 4;
@@ -39,8 +40,11 @@ class BaseUri {
     }
 
     /** @return BaseUri */
-    static function fromRequest(RequestInterface $request, $basePath = '') {
-        return new static($basePath, $request->getUri());
+    static function fromRequest(RequestInterface $request, $basePath = null) {
+        return new static(
+            $basePath ?: $request->getAttribute(self::BASE_PATH, ''),
+            $request->getUri()
+        );
     }
 
     /**

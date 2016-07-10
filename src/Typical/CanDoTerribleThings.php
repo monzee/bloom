@@ -30,7 +30,7 @@ trait CanDoTerribleThings {
     function import($name, $namespace = null, $scope = null) {
         global $___instance;
         $___instance = $scope ?: $this;
-        if (!function_exists($name)) {
+        if (!function_exists($namespace . '\\' . $name)) {
             $fn = "function {$name}() {"
                 . "global \$___instance;"
                 . "return call_user_func_array("

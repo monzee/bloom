@@ -40,7 +40,7 @@ class TemplateScope {
     function render($__FILE, array $__LOCALS = []) {
         $this->raw = $__LOCALS;
         foreach ($__LOCALS as $k => $v) {
-            if (false !== preg_match(self::LEGAL_IDENTIFIER, $k)) {
+            if (preg_match(self::LEGAL_IDENTIFIER, $k)) {
                 $$k = is_string($v) ? $this->e($v) : $v;
             }
         }
