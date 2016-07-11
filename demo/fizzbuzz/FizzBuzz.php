@@ -3,7 +3,6 @@
 namespace demo\fizzbuzz;
 
 use Codeia\Mvc\Locatable;
-use Psr\Http\Message\UriInterface as Uri;
 
 /*
  * This file is a part of the Bloom project.
@@ -16,6 +15,8 @@ use Psr\Http\Message\UriInterface as Uri;
  * @author Mon Zafra &lt;mz@codeia.ph&gt;
  */
 class FizzBuzz implements Locatable {
+
+    use \Codeia\Typical\CanGraftPathsInUrl;
 
     private $n;
 
@@ -42,8 +43,8 @@ class FizzBuzz implements Locatable {
         return new FizzBuzz($this->n + 1);
     }
 
-    function locate(Uri $base) {
-        return $base->withPath("/fizzbuzz/{$this->n}");
+    private function pathSuffix() {
+        return "/fizzbuzz/{$this->n}";
     }
 
 }

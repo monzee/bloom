@@ -43,7 +43,7 @@ class Application implements FrontController {
         if (null !== $this->controller) {
             $finalRequest = $c->get($this->controller)->dispatch($request);
             if ($finalRequest !== null && $finalRequest !== $request) {
-                $c->unshift(ServerRequestInterface::class, $finalRequest);
+                $c->push(ServerRequestInterface::class, $finalRequest);
                 $c->push(RequestInterface::class, $finalRequest);  // you sure?
             }
         }

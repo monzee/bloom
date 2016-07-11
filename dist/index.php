@@ -22,9 +22,12 @@ chdir(__DIR__);
 require_once '../vendor/autoload.php';
 
 Bloom::run(CleanUrlApp::autoResolve(), function (RouteListBuilder $on) {
-    $on->get('/', Root::class);
-    $on->get('/foo', CleanUrlApp::DEFAULT_ROUTE);
-    $on->get('/hello[/{name}]', [Hello::class, HelloView::class]);
-    $on->get('/fizzbuzz[/{prev:\d+}]',
-        [fb\FizzBuzzController::class, fb\FizzBuzzView::class]);
+    foreach (['', '/dist', '/dist/index.php'] as $basePath) {
+        $on->stem($basePath)
+            ->get('/', Root::class)
+            ->get('/foo', CleanUrlApp::DEFAULT_ROUTE)
+            ->get('/hello[/{name}]', [Hello::class, HelloView::class])
+            ->get('/fizzbuzz[/{prev:\d+}]',
+                [fb\FizzBuzzController::class, fb\FizzBuzzView::class]);
+    }
 });

@@ -36,11 +36,16 @@ class Router implements Controller {
         switch (count($result)) {
             case 1:  // not found
                 // TODO
-                break;
+                return $r->withAttribute(
+                    HttpState::STATUS, HttpState::STATUS_NOT_FOUND
+                );
+
             case 2:  // matched path but not the method
                 list(, $allowedMethods) = $result;
                 // TODO
-                break;
+                return $r->withAttribute(
+                    HttpState::STATUS, '405 Method Not Allowed'
+                );
 
             default:
                 list(, $message, $attrs) = $result;

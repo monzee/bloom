@@ -4,6 +4,7 @@ namespace demo;
 
 use Codeia\Mvc\Controller;
 use Codeia\Mvc\View;
+use Codeia\Typical\HttpState;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\StreamInterface as Stream;
 
@@ -44,8 +45,9 @@ class HelloView implements View {
 
     private $world;
 
-    function __construct(World $model) {
+    function __construct(World $model, HttpState $http) {
         $this->world = $model;
+        $this->setBaseUri($http->baseUri()->build());
     }
 
     function write(Stream $body) {

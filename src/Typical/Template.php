@@ -3,7 +3,8 @@
 namespace Codeia\Typical;
 
 use Codeia\Mvc\Routable;
-use Psr\Http\Message\RequestInterface;
+use Codeia\Typical\BaseUri;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 
 /*
@@ -29,9 +30,12 @@ class Template implements Routable {
         $this->extras[$key] = $value;
     }
 
-    function traverse(RequestInterface $r) {
+    function traverse(ServerRequestInterface $r) {
+        $baseUri = BaseUri::fromRequest($r)->build();
+        $prefix = addslashes($baseUri->getPath());
+        $pattern = "#^{$prefix}/?([^/]+)(.*)#";
         $uri = $r->getUri();
-        if (preg_match('#^/?([^/]+)(.*)#', $uri->getPath(), $matches)) {
+        if (preg_match($pattern, $uri->getPath(), $matches)) {
             $this->page = $matches[1];
             return $r->withUri($uri->withPath($matches[2]));
         }
@@ -45,8 +49,6 @@ class Template implements Routable {
             $path = rtrim($base, '/') . '/' . ltrim($path, '/');
         }
         return $uri->withPath($path);
-
-
     }
 
 }

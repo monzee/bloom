@@ -17,6 +17,8 @@ use Psr\Http\Message\UriInterface as Uri;
  */
 class World implements Locatable {
 
+    use \Codeia\Typical\CanGraftPathsInUrl;
+
     private $name;
 
     function greet($name) {
@@ -34,9 +36,9 @@ class World implements Locatable {
         return $world;
     }
 
-    function locate(Uri $base) {
+    private function pathSuffix() {
         $name = $this->name ? "/{$this->name}" : '';
-        return $base->withPath("/hello{$name}");
+        return "/hello{$name}";
     }
 
 }

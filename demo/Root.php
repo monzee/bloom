@@ -3,6 +3,7 @@
 namespace demo;
 
 use Codeia\Mvc\Controller;
+use Codeia\Typical\BaseUri;
 use Codeia\Typical\CanGenerateUrls;
 use Codeia\Typical\Template;
 use Psr\Http\Message\ServerRequestInterface;
@@ -42,6 +43,8 @@ class Root implements Controller {
     }
 
     function dispatch(ServerRequestInterface $r) {
+        // this is important if your app is not located at the server's docroot
+        $this->setBaseUri(BaseUri::fromRequest($r)->build());
         $this->template->bind('hello', $this->urlTo(new World()));
         $this->template->bind('fizz', $this->urlTo(new fizzbuzz\FizzBuzz()));
         $this->template->bind('foo', $this->urlTo(new Template('foo')));

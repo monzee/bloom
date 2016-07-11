@@ -22,13 +22,23 @@ class TemplateBasedView implements View {
     use CanDoTerribleThings;
 
     private $model;
+    private $status = 200;
+    private $reason = 'Ok';
+    private $type = 'text/html';
 
-    function __construct(Template $m) {
+    function __construct(Template $m, HttpState $http = null) {
         $this->model = $m;
+        if ($http) {
+            $this->setBaseUri($http->baseUri()->build());
+            $this->type = $http->contentType();
+            list($this->status, $this->reason) = $http->status();
+        }
     }
 
     function fold(ResponseInterface $r) {
-        $r = $r->withStatus(200)->withHeader('content-type', 'text/html');
+        $r = $r
+            ->withStatus($this->status, $this->reason)
+            ->withHeader('Content-Type', $this->type);
         $phtml = $this->model->page . '.phtml';
         $r->getBody()->write($this->render($phtml, $this->model->extras));
         return $r;

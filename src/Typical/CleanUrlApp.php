@@ -32,6 +32,8 @@ class CleanUrlApp implements ContainerInterface {
     const DEFAULT_ROUTE = [RoutableController::class, TemplateBasedView::class];
 
     protected $container;
+    protected $superseded = [];
+    protected $fallback;
 
     function __construct() {
         $this->container = $this->newContext();
@@ -48,7 +50,16 @@ class CleanUrlApp implements ContainerInterface {
     }
 
     function has($id) {
-        return $this->container->has($id);
+        error_log($id);
+        error_log(join('|', $this->superseded));
+        return !in_array($id, $this->superseded) && $this->container->has($id);
+    }
+
+    function supersede(ContainerInterface $newServices, array $ids) {
+        $this->fallback = $newServices;
+        foreach ($ids as $id) {
+            $this->superseded[] = $id;
+        }
     }
 
     function newContext() {
@@ -58,6 +69,7 @@ class CleanUrlApp implements ContainerInterface {
             'metaController' => [Mvc\Controller::class],
             'metaView' => [Mvc\View::class],
         ])->withScoped([
+            'http' => [HttpState::class],
             'controller' => [RoutableController::class],
             'view' => [TemplateBasedView::class],
             'dispatcher' => [Mvc\EntryPoint::class, Mvc\FrontController::class],
@@ -92,12 +104,19 @@ class CleanUrlApp implements ContainerInterface {
         return new Responder();
     }
 
+    function http(ContainerInterface $c) {
+        return new HttpState($this->get(ServerRequestInterface::class));
+    }
+
     function controller(ContainerInterface $c) {
         return new RoutableController($c->get(Mvc\Routable::class));
     }
 
     function view(ContainerInterface $c) {
-        return new TemplateBasedView($c->get(Template::class));
+        return new TemplateBasedView(
+            $c->get(Template::class),
+            $c->get(HttpState::class)
+        );
     }
 
     function request() {

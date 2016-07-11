@@ -2,8 +2,6 @@
 
 namespace Codeia\Di;
 
-use Interop\Container\ContainerInterface;
-
 /*
  * This file is a part of the Bloom project.
  * See the LICENSE file at the project root for the terms of use.
@@ -14,10 +12,11 @@ use Interop\Container\ContainerInterface;
  *
  * @author Mon Zafra &lt;mz@codeia.ph&gt;
  */
-class ObjectGraph implements ContainerInterface {
+class ObjectGraph implements ReplaceableContainer {
 
     private $component;
     private $resolving = [];
+    private $superseded = [];
 
     function __construct(Component $c) {
         $this->component = $c;
@@ -34,7 +33,12 @@ class ObjectGraph implements ContainerInterface {
     }
 
     function has($id) {
-        return $this->component->provides($id);
+        return !in_array($id, $this->superseded) &&
+            $this->component->provides($id);
+    }
+
+    function supersede($id) {
+        $this->superseded[] = $id;
     }
 
     private function ensureNoCycles($name) {
@@ -43,5 +47,6 @@ class ObjectGraph implements ContainerInterface {
         }
         $this->resolving[] = $name;
     }
+
 
 }
