@@ -24,9 +24,9 @@
 
     "require": {
         "php": ">=5.5",
-        "container-interop/container-interop": "^1.1",
         "guzzlehttp/psr7": "^1.3",
-        "nikic/fast-route": "^1.0"
+        "nikic/fast-route": "^1.0",
+        "codeia/di-senpai": "^0.1.0"
     },
 
     "require-dev": {
