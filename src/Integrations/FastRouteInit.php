@@ -1,6 +1,6 @@
 <?php
 
-namespace Codeia\Typical;
+namespace Codeia\Integrations;
 
 use FastRoute\RouteCollector;
 
@@ -13,9 +13,8 @@ use FastRoute\RouteCollector;
  * This probably should be an interface tbhfam
  *
  * @author Mon Zafra &lt;mz@codeia.ph&gt;
- * @deprecated use {@see Codeia\Integrations\FastRouteInit}
  */
-class RouteListBuilder {
+class FastRouteInit {
 
     private $routes;
     private $prefix = '';

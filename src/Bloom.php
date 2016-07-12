@@ -18,6 +18,8 @@ use Psr\Http\Message\ResponseInterface as Response;
  * Root runner. You'll probably want to use this in index.php.
  *
  * @author Mon Zafra &lt;mz@codeia.ph&gt;
+ * @deprecated Use Codeia\Integrations classes for now; will probably build a
+ * facade and bring this class back later when the api has solidified.
  */
 class Bloom {
 

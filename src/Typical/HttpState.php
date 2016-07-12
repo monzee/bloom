@@ -19,7 +19,6 @@ use Psr\Http\Message\ServerRequestInterface as Request;
  */
 class HttpState {
 
-    const BASE_PATH = 'basePath';
     const TYPE = 'targetType';
     const STATUS = 'targetStatus';
     const SUPPORTED = 'supportedMethods';
@@ -52,13 +51,13 @@ class HttpState {
     private $supported;
 
     function __construct(Request $r) {
-        $basePath = $r->getAttribute(self::BASE_PATH, '/');
+        $basePath = $r->getAttribute(BaseUri::KEY, '/');
         $this->baseUri = new BaseUri($basePath, $r->getUri());
         $this->contentType = $r->getAttribute(self::TYPE, self::TYPE_HTML);
         list($this->status, $this->reason) = $this->normalizeStatusLine(
             $r->getAttribute(self::STATUS, self::STATUS_OK)
         );
-        $this->supported = $r->getAttribute(self::SUPPORTED, ['GET']);
+        $this->supported = $r->getAttribute(self::SUPPORTED, [$r->getMethod()]);
     }
 
     /** @return BaseUri */

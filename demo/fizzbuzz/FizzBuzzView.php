@@ -3,6 +3,7 @@
 namespace demo\fizzbuzz;
 
 use Codeia\Mvc\View;
+use Codeia\Typical\HttpState;
 use Psr\Http\Message\StreamInterface as Stream;
 
 /*
@@ -23,8 +24,9 @@ class FizzBuzzView implements View {
 
     private $fizzbuzz;
 
-    function __construct(FizzBuzz $model) {
+    function __construct(FizzBuzz $model, HttpState $http) {
         $this->fizzbuzz = $model;
+        $this->setBaseUri($http->baseUri()->build());
     }
 
     function write(Stream $body) {

@@ -1,6 +1,10 @@
 <?php
 
-namespace Codeia;
+namespace demo;
+
+use Codeia\Di;
+use Codeia\Integrations;
+use Codeia\Typical;
 
 /*
  * This file is a part of the Bloom project.
@@ -9,13 +13,23 @@ namespace Codeia;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$app = new Integrations\GuzzleFastRoute();
-
-$app(function ($on, $default) {
-    $on->stem('/dist/page.php')
-        ->get('/', \demo\Root::class)
-        ->get('/hello[/{name}]', [\demo\Hello::class, \demo\HelloView::class])
-        ->get('/fox', $default);
+$app = new Integrations\GuzzleFastRoute(function ($on, $default) {
+    foreach (['/page.php', '/dist/page.php'] as $prefix) {
+        $on->stem($prefix)
+            ->get('/', Root::class)
+            ->get('/hello[/{name}]', [Hello::class, HelloView::class])
+            ->get('/fizzbuzz[/{prev:\d+}]', [
+                fizzbuzz\FizzBuzzController::class,
+                fizzbuzz\FizzBuzzView::class
+            ])
+            ->get('/foo', $default);
+    }
 });
 
-(new Typical\Responder)->fold($app->main(new Di\EmptyContainer));
+if (null !== ($response = $app->main(new Di\EmptyContainer))) {
+    $body = $response->getBody();
+    if ($body->getSize() === 0) {
+        $body->write($response->getReasonPhrase() . "\n");
+    }
+    (new Typical\Responder)->fold($response);
+}

@@ -7,13 +7,9 @@ use Codeia\Di\MutableSandwich;
 use Codeia\Di\ContainerGraph;
 use Codeia\Di\AutoResolve;
 use Codeia\Mvc\FrontController;
-use Codeia\Mvc\Controller;
-use Codeia\Mvc\View;
-use Codeia\Typical\HttpState;
 use Codeia\Mvc\Routable;
+use Codeia\Typical\HttpState;
 use Codeia\Typical\RoutableController;
-use Codeia\Typical\RouteListBuilder;
-use Codeia\Typical\Router;
 use Codeia\Typical\Template;
 use Codeia\Typical\TemplateBasedView;
 
@@ -48,6 +44,28 @@ class GuzzleFastRoute implements FrontController {
     private $view;
     private $context;
     private $request;
+    private $response;
+
+    /**
+     * Declare routes in the callable argument.
+     *
+     * @param callable $init Function of type FastRouteInit*(str*str) -> ()
+     *                       The second param is the pair of default controller
+     *                       and view classes.
+     */
+    function __construct(callable $init = null) {
+        $this->preRoute = $init;
+    }
+
+    /**
+     * For zend-expressive and other middleware-based frameworks compatibility.
+     *
+     * @param RequestInterface $request
+     * @param ResponseInterface $response
+     */
+    function __invoke(RequestInterface $request, ResponseInterface $response) {
+
+    }
 
     function setRoute($controllerClass, $viewClass, $contextClass = null) {
         $this->controller = $controllerClass;
@@ -57,15 +75,17 @@ class GuzzleFastRoute implements FrontController {
 
     function main(ContainerInterface $c) {
         $defaults = $this->getContext();
-        $c = new MutableSandwich(new AutoResolve(new ContainerGraph($defaults, $c)));
+        $c = new MutableSandwich(
+            new AutoResolve(new ContainerGraph($defaults, $c))
+        );
         if (!empty($this->preRoute)) {
             call_user_func(
                 $this->preRoute,
-                $c->get(RouteListBuilder::class),
+                $c->get(FastRouteInit::class),
                 [RoutableController::class, TemplateBasedView::class]
             );
         }
-        $router = $c->get(Router::class);
+        $router = $c->get(FastRouteDispatch::class);
         $this->request = $c->get(ServerRequestInterface::class);
         $this->request = $router->dispatch($this->request);
 
@@ -89,10 +109,6 @@ class GuzzleFastRoute implements FrontController {
         }
     }
 
-    function __invoke(callable $init) {
-        $this->preRoute = $init;
-    }
-
     function willBuildContext(ObjectGraphBuilder $b) {
     }
 
@@ -105,11 +121,11 @@ class GuzzleFastRoute implements FrontController {
                 RequestInterface::class,
             ],
             'response' => [ResponseInterface::class, Response::class],
-            'router' => [Router::class],
+            'router' => [FastRouteDispatch::class],
             'routeDispatcher' => [RouteDispatcher::class],
+            'routeBuilder' => [FastRouteInit::class],
         ])->withScoped([
             'routeCollector' => [RouteCollector::class],
-            'routeBuilder' => [RouteListBuilder::class],
             'httpState' => [HttpState::class],
             'template' => [Template::class, Routable::class],
         ]);
@@ -126,7 +142,7 @@ class GuzzleFastRoute implements FrontController {
     }
 
     function response() {
-        return new Response();
+        return $this->response ?: new Response();
     }
 
     function httpState(ContainerInterface $c) {
@@ -134,7 +150,7 @@ class GuzzleFastRoute implements FrontController {
     }
 
     function router(ContainerInterface $c) {
-        return new Router(
+        return new FastRouteDispatch(
             $c->get(FrontController::class),
             $c->get(RouteDispatcher::class)
         );
@@ -151,7 +167,7 @@ class GuzzleFastRoute implements FrontController {
     }
 
     function routeBuilder(ContainerInterface $c) {
-        return new RouteListBuilder($c->get(RouteCollector::class));
+        return new FastRouteInit($c->get(RouteCollector::class));
     }
 
     function template() {

@@ -2,8 +2,6 @@
 
 namespace Codeia\Typical;
 
-use InvalidArgumentException;
-
 /*
  * This file is a part of the Bloom project.
  * See the LICENSE file at the project root for the terms of use.
@@ -34,7 +32,7 @@ trait CanRenderTemplates {
             $tpl->render($path, $vars);
             return ob_get_clean();
         }
-        throw new InvalidArgumentException("template {$file} not found.");
+        throw new TemplateNotFoundError($file, $this->_templatePaths);
     }
 
     private function pathTo($file) {

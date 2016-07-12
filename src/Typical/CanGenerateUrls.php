@@ -4,7 +4,6 @@ namespace Codeia\Typical;
 
 use Codeia\Mvc\Locatable;
 use Psr\Http\Message\UriInterface;
-use GuzzleHttp\Psr7\Uri;
 
 /*
  * This file is a part of the Bloom project.
@@ -45,7 +44,7 @@ trait CanGenerateUrls {
      * @return UriInterface
      */
     function urlTo(Locatable $resource, UriInterface $base = null) {
-        $this->_baseUri = $this->_baseUri ?: new Uri();
+        $this->_baseUri = $this->_baseUri ?: new UriStub(__CLASS__, __METHOD__);
         return $resource->locate($base ?: $this->_baseUri);
     }
 

@@ -26,6 +26,7 @@ use FastRoute\Dispatcher as RouteDispatcher;
  * Description of CleanUrlApp
  *
  * @author Mon Zafra &lt;mz@codeia.ph&gt;
+ * @deprecated use {@see Codeia\Integrations\GuzzleFastRoute}
  */
 class CleanUrlApp implements ContainerInterface {
 
