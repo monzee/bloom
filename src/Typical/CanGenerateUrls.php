@@ -48,4 +48,11 @@ trait CanGenerateUrls {
         return $resource->locate($base ?: $this->_baseUri);
     }
 
+    /**
+     * @return UriInterface
+     */
+    function baseUri() {
+        return _baseUri;
+    }
+
 }

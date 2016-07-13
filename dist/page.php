@@ -2,9 +2,8 @@
 
 namespace demo;
 
-use Codeia\Di;
-use Codeia\Integrations;
-use Codeia\Typical;
+use Codeia\Integrations\Seed;
+use Codeia\Integrations\GuzzleFastRoute;
 
 /*
  * This file is a part of the Bloom project.
@@ -13,7 +12,7 @@ use Codeia\Typical;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$app = new Integrations\GuzzleFastRoute(function ($on, $default) {
+$app = new GuzzleFastRoute(function ($on, $default) {
     foreach (['/page.php', '/dist/page.php'] as $prefix) {
         $on->stem($prefix)
             ->get('/', Root::class)
@@ -26,10 +25,4 @@ $app = new Integrations\GuzzleFastRoute(function ($on, $default) {
     }
 });
 
-if (null !== ($response = $app->main(new Di\EmptyContainer))) {
-    $body = $response->getBody();
-    if ($body->getSize() === 0) {
-        $body->write($response->getReasonPhrase() . "\n");
-    }
-    (new Typical\Responder)->fold($response);
-}
+Seed::noContext()->run($app, Seed::EMIT_IF_NEEDED);

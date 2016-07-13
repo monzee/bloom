@@ -3,15 +3,16 @@
 namespace Codeia\Integrations;
 
 use Codeia\Di\ObjectGraphBuilder;
-use Codeia\Di\MutableSandwich;
 use Codeia\Di\ContainerGraph;
 use Codeia\Di\AutoResolve;
+use Codeia\Di\EmptyContainer;
 use Codeia\Mvc\FrontController;
 use Codeia\Mvc\Routable;
+use Codeia\Typical\BaseUri;
 use Codeia\Typical\HttpState;
 use Codeia\Typical\RoutableController;
 use Codeia\Typical\Template;
-use Codeia\Typical\TemplateBasedView;
+use Codeia\Typical\TemplateView;
 
 use Interop\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -64,7 +65,19 @@ class GuzzleFastRoute implements FrontController {
      * @param ResponseInterface $response
      */
     function __invoke(RequestInterface $request, ResponseInterface $response) {
-
+        if (!($request instanceof ServerRequestInterface)) {
+            $request = new ServerRequest(
+                $request->getMethod(),
+                $request->getUri(),
+                $request->getHeaders(),
+                $request->getBody(),
+                $request->getProtocolVersion(),
+                $request->getServerParams()
+            );
+        }
+        $this->request = $request;
+        $this->response = $response;
+        return $this->main(new EmptyContainer);
     }
 
     function setRoute($controllerClass, $viewClass, $contextClass = null) {
@@ -75,21 +88,24 @@ class GuzzleFastRoute implements FrontController {
 
     function main(ContainerInterface $c) {
         $defaults = $this->getContext();
-        $c = new MutableSandwich(
-            new AutoResolve(new ContainerGraph($defaults, $c))
-        );
+        $c = new AutoResolve(new ContainerGraph($defaults, $c));
         if (!empty($this->preRoute)) {
             call_user_func(
                 $this->preRoute,
                 $c->get(FastRouteInit::class),
-                [RoutableController::class, TemplateBasedView::class]
+                [RoutableController::class, TemplateView::class]
             );
         }
         $router = $c->get(FastRouteDispatch::class);
         $this->request = $c->get(ServerRequestInterface::class);
         $this->request = $router->dispatch($this->request);
 
-        // TODO: check $context
+        if ($this->context && $c->has($this->context)) {
+            $more = $c->get($this->context);
+            $c->tap(function (ContainerInterface $wrapped) use ($more) {
+                return new ContainerGraph($wrapped, $more);
+            });
+        }
 
         if ($this->controller) {
             $ctrlr = $c->get($this->controller);
@@ -124,6 +140,7 @@ class GuzzleFastRoute implements FrontController {
             'router' => [FastRouteDispatch::class],
             'routeDispatcher' => [RouteDispatcher::class],
             'routeBuilder' => [FastRouteInit::class],
+            'baseUri' => [BaseUri::class],
         ])->withScoped([
             'routeCollector' => [RouteCollector::class],
             'httpState' => [HttpState::class],
@@ -173,4 +190,10 @@ class GuzzleFastRoute implements FrontController {
     function template() {
         return new Template();
     }
+
+    function baseUri(ContainerInterface $c) {
+        $http = $c->get(HttpState::class);
+        return $c->baseUri();
+    }
+
 }

@@ -4,7 +4,7 @@ namespace Codeia\Typical;
 
 use Codeia\Mvc\Controller;
 use Codeia\Mvc\FrontController;
-use Codeia\Typical\TemplateBasedView;
+use Codeia\Typical\TemplateView;
 use Psr\Http\Message\ServerRequestInterface;
 use FastRoute\Dispatcher as RouteDispatcher;
 
@@ -17,10 +17,11 @@ use FastRoute\Dispatcher as RouteDispatcher;
  * Description of Router
  *
  * @author Mon Zafra &lt;mz@codeia.ph&gt;
+ * @deprecated moved to {@see Codeia\Integrations\FastRouteDispatch}
  */
 class Router implements Controller {
 
-    const DEFAULT_VIEW = TemplateBasedView::class;
+    const DEFAULT_VIEW = TemplateView::class;
 
     private $front;
     private $dispatcher;

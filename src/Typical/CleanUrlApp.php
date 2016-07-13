@@ -30,7 +30,7 @@ use FastRoute\Dispatcher as RouteDispatcher;
  */
 class CleanUrlApp implements ContainerInterface {
 
-    const DEFAULT_ROUTE = [RoutableController::class, TemplateBasedView::class];
+    const DEFAULT_ROUTE = [RoutableController::class, TemplateView::class];
 
     protected $container;
     protected $superseded = [];
@@ -72,7 +72,7 @@ class CleanUrlApp implements ContainerInterface {
         ])->withScoped([
             'http' => [HttpState::class],
             'controller' => [RoutableController::class],
-            'view' => [TemplateBasedView::class],
+            'view' => [TemplateView::class],
             'dispatcher' => [Mvc\EntryPoint::class, Mvc\FrontController::class],
             'template' => [Mvc\Routable::class, Template::class],
             'routeCollector' => [RouteCollector::class],
@@ -114,7 +114,7 @@ class CleanUrlApp implements ContainerInterface {
     }
 
     function view(ContainerInterface $c) {
-        return new TemplateBasedView(
+        return new TemplateView(
             $c->get(Template::class),
             $c->get(HttpState::class)
         );

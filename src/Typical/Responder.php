@@ -25,19 +25,34 @@ class Responder implements View {
     }
 
     private function emit(ResponseInterface $response) {
+        $body = $response->getBody();
+        $code = $response->getStatusCode();
+        $status = $code . ' ' . $response->getReasonPhrase();
         if (headers_sent()) {
             error_log('headers already sent.');
         } else {
-            header('HTTP/' . $response->getProtocolVersion()
-                . ' ' . $response->getStatusCode()
-                . ' ' . $response->getReasonPhrase());
+            header('HTTP/' . $response->getProtocolVersion() . ' ' . $status);
             foreach ($response->getHeaders() as $header => $values) {
                 $k = urlencode($header);
                 $v = implode(', ', $values);
                 header("{$k}: {$v}");
             }
         }
-        echo $response->getBody();
+        if ($body->getSize() === 0 && $code !== HttpState::STATUS_NO_CONTENT) {
+            $body->write($status . "\n");
+        }
+        echo $body;
     }
 
+    /**
+     * Sends the headers and echoes the body.
+     *
+     * If the body has no content and the status is not 205 No Content, the
+     * response reason phrase is written to the body then echo'd.
+     *
+     * @param ResponseInterface $response
+     */
+    static function send(ResponseInterface $response) {
+        (new static)->fold($response);
+    }
 }

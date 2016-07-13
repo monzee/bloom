@@ -3,7 +3,6 @@
 namespace demo;
 
 use Codeia\Mvc\Locatable;
-use Psr\Http\Message\UriInterface as Uri;
 
 /*
  * This file is a part of the Bloom project.

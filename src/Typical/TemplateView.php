@@ -15,7 +15,7 @@ use Psr\Http\Message\ResponseInterface;
  *
  * @author Mon Zafra &lt;mz@codeia.ph&gt;
  */
-class TemplateBasedView implements View {
+class TemplateView implements View {
 
     use CanGenerateUrls;
     use CanRenderTemplates;
