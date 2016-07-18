@@ -145,6 +145,7 @@ class GuzzleFastRoute implements FrontController {
             'routeCollector' => [RouteCollector::class],
             'httpState' => [HttpState::class],
             'template' => [Template::class, Routable::class],
+            'view' => [TemplateView::class],
         ]);
         $this->willBuildContext($b);
         return $b->build();
@@ -191,9 +192,15 @@ class GuzzleFastRoute implements FrontController {
         return new Template();
     }
 
+    function view(ContainerInterface $c) {
+        return new TemplateView(
+            $c->get(Template::class),
+            $c->get(HttpState::class)
+        );
+    }
+
     function baseUri(ContainerInterface $c) {
-        $http = $c->get(HttpState::class);
-        return $c->baseUri();
+        return $c->get(HttpState::class)->baseUri();
     }
 
 }

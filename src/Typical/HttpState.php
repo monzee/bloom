@@ -82,7 +82,7 @@ class HttpState {
 
     private function normalizeStatusLine($status) {
         $s = trim($status);
-        list($code, $reason) = split(' ', $s, 2);
+        list($code, $reason) = explode(' ', $s, 2);
         if (!is_numeric($code)) {
             return [200, $s];
         }
