@@ -52,7 +52,7 @@ trait CanGenerateUrls {
      * @return UriInterface
      */
     function baseUri() {
-        return _baseUri;
+        return $this->_baseUri;
     }
 
 }

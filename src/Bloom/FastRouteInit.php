@@ -1,6 +1,6 @@
 <?php
 
-namespace Codeia\Integrations;
+namespace Codeia\Bloom;
 
 use FastRoute\RouteCollector;
 

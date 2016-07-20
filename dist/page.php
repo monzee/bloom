@@ -2,8 +2,8 @@
 
 namespace demo;
 
-use Codeia\Integrations\Seed;
-use Codeia\Integrations\GuzzleFastRoute;
+use Codeia\Bloom\Seed;
+use Codeia\Bloom\GuzzleFastRoute;
 
 /*
  * This file is a part of the Bloom project.
