@@ -1,0 +1,17 @@
+<?php
+
+namespace Codeia\Test;
+
+/*
+ * This file is a part of the Bloom project.
+ * See the LICENSE file at the project root for the terms of use.
+ */
+
+$this->extend('shell', function ($start, $end) {
+    yield 'author' => 'overridden'; ?>
+
+<?php yield 'content' => $start; ?>
+content captured from child
+<?php yield $end; ?>
+
+<?php }); ?>

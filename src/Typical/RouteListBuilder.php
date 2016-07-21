@@ -13,7 +13,7 @@ use FastRoute\RouteCollector;
  * This probably should be an interface tbhfam
  *
  * @author Mon Zafra &lt;mz@codeia.ph&gt;
- * @deprecated use {@see Codeia\Integrations\FastRouteInit}
+ * @deprecated use {@see Codeia\Bloom\FastRouteInit}
  */
 class RouteListBuilder {
 

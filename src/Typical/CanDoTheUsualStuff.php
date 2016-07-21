@@ -13,7 +13,7 @@ namespace Codeia\Typical;
  * @author Mon Zafra &lt;mz@codeia.ph&gt;
  */
 trait CanDoTheUsualStuff {
-    use CanWriteContent;
-    use CanRenderTemplates;
     use CanGenerateUrls;
+    use CanRenderTemplates;
+    use CanWriteContent;
 }

@@ -17,7 +17,7 @@ use FastRoute\Dispatcher as RouteDispatcher;
  * Description of Router
  *
  * @author Mon Zafra &lt;mz@codeia.ph&gt;
- * @deprecated moved to {@see Codeia\Integrations\FastRouteDispatch}
+ * @deprecated moved to {@see Codeia\Bloom\FastRouteDispatch}
  */
 class Router implements Controller {
 

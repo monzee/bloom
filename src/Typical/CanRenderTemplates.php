@@ -15,6 +15,7 @@ namespace Codeia\Typical;
 trait CanRenderTemplates {
 
     private $_templatePaths = ['.'];
+    protected $_templateCallReceiver;
 
     function pushPath($path) {
         $this->_templatePaths[] = $path;
@@ -24,12 +25,15 @@ trait CanRenderTemplates {
         array_unshift($this->_templatePaths, $path);
     }
 
+    function templateScope() {
+        return new TemplateScope($this->_templateCallReceiver ?: $this);
+    }
+
     function render($file, array $vars = []) {
         $path = $this->pathTo($file);
         if ($path !== null) {
-            $tpl = new TemplateScope($this);
             ob_start();
-            $tpl->render($path, $vars);
+            $this->templateScope()->render($path, $vars);
             return ob_get_clean();
         }
         throw new TemplateNotFoundError($file, $this->_templatePaths);

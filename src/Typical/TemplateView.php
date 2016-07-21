@@ -20,11 +20,14 @@ class TemplateView implements View {
     use CanGenerateUrls;
     use CanRenderTemplates;
     use CanDoTerribleThings;
+    use CanContainValues;
 
-    private $model;
-    private $status = 200;
-    private $reason = 'Ok';
-    private $type = 'text/html';
+    protected $model;
+    protected $status = 200;
+    protected $reason = 'Ok';
+    protected $type = 'text/html';
+    private $captureStack;
+
 
     function __construct(Template $m, HttpState $http = null) {
         $this->model = $m;
@@ -39,9 +42,47 @@ class TemplateView implements View {
         $r = $r
             ->withStatus($this->status, $this->reason)
             ->withHeader('Content-Type', $this->type);
-        $phtml = $this->model->page . '.phtml';
+        $phtml = $this->getTemplateFile($this->model->page);
         $r->getBody()->write($this->render($phtml, $this->model->extras));
         return $r;
     }
 
+    protected function setTemplateDelegate($receiver) {
+        $this->_templateCallReceiver = $receiver;
+    }
+
+    protected function getTemplateFile($name) {
+        return $name . '.phtml';
+    }
+
+    protected function willReceiveValues() {
+        $this->captureStack = [];
+        ob_start();
+    }
+
+    protected function receive($key, $value) {
+        $this->model->bind($key, $value);
+    }
+
+    protected function receiveStart($data, $isSignificant = true) {
+        if ($isSignificant) {
+            $this->captureStack[] = (string) $data;
+            ob_start();
+        }
+    }
+
+    protected function receiveEnd($data, $isSignificant = true) {
+        if (!empty($this->captureStack)) {
+            $key = array_pop($this->captureStack);
+            $val = new RawText(ob_get_clean());
+            $this->receive($key, $val);
+        }
+    }
+
+    protected function didReceiveValues() {
+        for ($i = count($this->captureStack); $i > 0; $i--) {
+            $this->receiveEnd(null);
+        }
+        ob_end_clean();
+    }
 }

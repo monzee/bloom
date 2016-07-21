@@ -20,7 +20,7 @@ use Psr\Http\Message\ResponseInterface;
  * Default HTTP application.
  *
  * @author Mon Zafra &lt;mz@codeia.ph&gt;
- * @deprecated use {@see Codeia\Integerations\GuzzleFastRoute}
+ * @deprecated use {@see Codeia\Bloom\GuzzleFastRoute}
  */
 class Application implements FrontController {
 
