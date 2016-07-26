@@ -21,9 +21,11 @@ class Template implements Routable {
 
     public $page;
     public $extras = [];
+    public $delegate;
 
-    function __construct($page = 'index') {
+    function __construct($page = 'index', $delegate = null) {
         $this->page = $page;
+        $this->delegate = $delegate;
     }
 
     function bind($key, $value) {

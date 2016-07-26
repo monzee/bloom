@@ -10,11 +10,11 @@ use Psr\Http\Message\ResponseInterface;
  */
 
 /**
- * Allows rendering of other templates by calling extend().
+ * Can render other templates by in the same (possibly extended) context.
  *
  * @author Mon Zafra &lt;mz@codeia.ph&gt;
  */
-class TemplateExtendingView extends TemplateView {
+class TwoStepTemplateView extends TemplateView {
 
     private $superTemplate;
     private $extender;
@@ -30,7 +30,7 @@ class TemplateExtendingView extends TemplateView {
             return $response;
         }
         $saved = $this->model;
-        $this->model = new Template($this->superTemplate);
+        $this->model = new Template($this->superTemplate, $saved->delegate);
         foreach ($saved->extras as $key => $val) {
             $this->model->bind($key, $val);
         }

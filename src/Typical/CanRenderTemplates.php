@@ -15,7 +15,7 @@ namespace Codeia\Typical;
 trait CanRenderTemplates {
 
     private $_templatePaths = ['.'];
-    protected $_templateCallReceiver;
+    protected $_secondaryDelegate;
 
     function pushPath($path) {
         $this->_templatePaths[] = $path;
@@ -26,7 +26,7 @@ trait CanRenderTemplates {
     }
 
     function templateScope() {
-        return new TemplateScope($this->_templateCallReceiver ?: $this);
+        return new TemplateScope($this);
     }
 
     function render($file, array $vars = []) {
@@ -37,6 +37,16 @@ trait CanRenderTemplates {
             return ob_get_clean();
         }
         throw new TemplateNotFoundError($file, $this->_templatePaths);
+    }
+
+    function __call($name, array $args) {
+        if (empty($this->_secondaryDelegate)) {
+            throw new \BadMethodCallException(
+                "No such method: {$name}; did you forget to set the"
+                . " template delegate?"
+            );
+        }
+        return call_user_func_array([$this->_secondaryDelegate, $name], $args);
     }
 
     private function pathTo($file) {

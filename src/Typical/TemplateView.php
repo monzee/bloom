@@ -43,12 +43,13 @@ class TemplateView implements View {
             ->withStatus($this->status, $this->reason)
             ->withHeader('Content-Type', $this->type);
         $phtml = $this->getTemplateFile($this->model->page);
+        $this->setTemplateDelegate($this->model->delegate);
         $r->getBody()->write($this->render($phtml, $this->model->extras));
         return $r;
     }
 
     protected function setTemplateDelegate($receiver) {
-        $this->_templateCallReceiver = $receiver;
+        $this->_secondaryDelegate = $receiver;
     }
 
     protected function getTemplateFile($name) {

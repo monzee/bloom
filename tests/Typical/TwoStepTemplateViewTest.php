@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @author Mon Zafra &lt;mz@codeia.ph&gt;
  */
-class TemplateExtendingViewTest extends TestCase {
+class TwoStepTemplateViewTest extends TestCase {
 
     private function render(TemplateView $view) {
         $res = new \GuzzleHttp\Psr7\Response;
@@ -22,7 +22,7 @@ class TemplateExtendingViewTest extends TestCase {
     }
 
     private function view(Template $tpl) {
-        $view = new TemplateExtendingView($tpl);
+        $view = new TwoStepTemplateView($tpl);
         $view->unshiftPath(__DIR__ . '/../Test');
         return $view;
     }
