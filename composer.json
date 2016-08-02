@@ -30,10 +30,18 @@
     },
 
     "require-dev": {
-        "phpunit/phpunit": "^5.4"
+        "phpunit/phpunit": "^5.4",
+        "whatthejeff/nyancat-phpunit-resultprinter": "^1.2",
+        "kujira/phpunit-printer": "dev-master"
     },
 
     "scripts": {
-        "test": "phpunit --colors=always tests"
-    }
+        "test": "phpunit --colors=always tests --printer 'Kujira\\PHPUnit\\Printer'"
+    },
+
+    "repositories": [{
+        "type": "vcs",
+        "url": "https://github.com/monzee/kujira-phpunit-printer"
+    }]
+
 }
