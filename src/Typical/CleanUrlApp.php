@@ -5,7 +5,7 @@ namespace Codeia\Typical;
 use Codeia\Mvc;
 use Codeia\Di\AutoResolve;
 use Codeia\Di\ObjectGraphBuilder;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

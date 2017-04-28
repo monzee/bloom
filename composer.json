@@ -18,15 +18,14 @@
         "psr-4": {
             "demo\\": "demo",
             "Codeia\\": "tests"
-        },
-        "files": ["src/scratch.php"]
+        }
     },
 
     "require": {
-        "php": ">=5.5",
+        "php": ">=5.6",
         "guzzlehttp/psr7": "^1.3",
         "nikic/fast-route": "^1.0",
-        "codeia/di-senpai": "^0.1.0"
+        "codeia/di-senpai": "^0.1.5"
     },
 
     "require-dev": {
@@ -36,7 +35,7 @@
     },
 
     "scripts": {
-        "test": "phpunit --colors=always tests --printer 'Kujira\\PHPUnit\\Printer'"
+        "test": "phpunit tests --colors=always --printer 'Kujira\\PHPUnit\\Printer'"
     },
 
     "repositories": [{

@@ -6,7 +6,7 @@ use Codeia\Di\AutoResolve;
 use Codeia\Di\EmptyContainer;
 use Codeia\Mvc\EntryPoint;
 use Codeia\Typical\Responder;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 /*
  * This file is a part of the Bloom project.

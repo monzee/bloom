@@ -36,11 +36,6 @@ class BaseUriTest extends TestCase {
         $this->assertEquals('//z@x:foobar.kek:3214/a/b/c?d=e&f=g#h', (string) $uri);
     }
 
-    function test_remove_host() {
-        $uri = $this->addRemove(BaseUri::ALL, BaseUri::HOST);
-        $this->assertEquals('http:/a/b/c?d=e&f=g#h', (string) $uri);
-    }
-
     function test_remove_port() {
         $uri = $this->addRemove(BaseUri::ALL, BaseUri::PORT);
         $this->assertEquals('http://z@x:foobar.kek/a/b/c?d=e&f=g#h', (string) $uri);
@@ -63,12 +58,7 @@ class BaseUriTest extends TestCase {
 
     function test_remove_scheme_and_host() {
         $uri = $this->addRemove(BaseUri::ALL, BaseUri::SCHEME | BaseUri::HOST);
-        $this->assertEquals('/a/b/c?d=e&f=g#h', (string) $uri);
-    }
-
-    function test_remove_host_and_path() {
-        $uri = $this->addRemove(BaseUri::ALL, BaseUri::HOST | BaseUri::PATH);
-        $this->assertEquals('http:?d=e&f=g#h', (string) $uri);
+        $this->assertEquals('//z@:3214/a/b/c?d=e&f=g#h', (string) $uri);
     }
 
     function test_remove_path_query_and_fragment() {
@@ -76,14 +66,11 @@ class BaseUriTest extends TestCase {
         $this->assertEquals('http://z@x:foobar.kek:3214', (string) $uri);
     }
 
-    function test_remove_authority() {
+    function test_cannot_have_scheme_with_no_host() {
+        $uri = $this->removeAdd(BaseUri::ALL, BaseUri::SCHEME);
+        $this->assertEquals('http://localhost', (string) $uri);
         $uri = $this->addRemove(BaseUri::ALL, BaseUri::AUTHORITY);
-        $this->assertEquals('http:/a/b/c?d=e&f=g#h', (string) $uri);
-    }
-
-    function test_only_scheme_and_authority() {
-        $uri = $this->removeAdd(BaseUri::ALL, BaseUri::AUTHORITY | BaseUri::SCHEME);
-        $this->AssertEquals('http://z@x:foobar.kek:3214', (string) $uri);
+        $this->assertNotEquals('http:/a/b/c?d=e&f=g#h', (string) $uri);
     }
 
     function test_only_resource() {
@@ -92,16 +79,16 @@ class BaseUriTest extends TestCase {
     }
 
     function test_base_path_is_added_before_the_existing_path() {
-        $uri = (new BaseUri('lul'))
+        $uri = (new BaseUri('/lul'))
             ->without(BaseUri::ALL)
             ->with(BaseUri::PATH)
             ->buildFrom($this->uri);
-        $this->assertEquals('lul/a/b/c', (string) $uri);
+        $this->assertEquals('/lul/a/b/c', (string) $uri);
     }
 
     function test_default_includes_only_the_base_path() {
-        $uri = (new BaseUri('lul'))->buildFrom($this->uri);
-        $this->assertEquals('lul', (string) $uri);
+        $uri = (new BaseUri('/lul'))->buildFrom($this->uri);
+        $this->assertEquals('/lul', (string) $uri);
     }
 
     function test_default_is_empty_url_if_base_path_is_empty() {
@@ -118,9 +105,9 @@ class BaseUriTest extends TestCase {
 
     function test_base_slashes_are_untouched_if_path_is_not_included() {
         $uri = (new BaseUri('/lul//'))
-            ->with(BaseUri::SCHEME | BaseUri::FRAGMENT)
+            ->with(BaseUri::SCHEME | BaseUri::HOST | BaseUri::FRAGMENT)
             ->buildFrom($this->uri);
-        $this->assertEquals('http:/lul//#h', (string) $uri);
+        $this->assertEquals('http://x:foobar.kek/lul//#h', (string) $uri);
     }
 
     function test_base_path_with_some_other_parts() {

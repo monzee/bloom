@@ -2,7 +2,7 @@
 
 namespace Codeia\Mvc;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /*

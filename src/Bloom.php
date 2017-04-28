@@ -5,7 +5,7 @@ namespace Codeia;
 use Codeia\Mvc\EntryPoint;
 use Codeia\Mvc\View;
 use Codeia\Typical\RouteListBuilder;
-use Interop\Container\ContainerInterface as Container;
+use Psr\Container\ContainerInterface as Container;
 use Psr\Http\Message\RequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 
@@ -23,7 +23,7 @@ use Psr\Http\Message\ResponseInterface as Response;
  */
 class Bloom {
 
-    const VERSION = '0.2.0-dev';
+    const VERSION = '0.4-dev';
 
     /**
      * Runs the Codeia\Mvc\EntryPoint service in the container.

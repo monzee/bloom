@@ -44,14 +44,14 @@ interface CommonOps {
      * @param callable $branch
      * @return callable :: Predicate
      */
-    function _and(callable $branch);
+    function andAlso(callable $branch);
 
     /**
      *
      * @param callable $branch :: Predicate
      * @return callable :: Predicate
      */
-    function _or(callable $branch);
+    function orElse(callable $branch);
 
     /**
      * @param array|Traversable $right :: List Row
